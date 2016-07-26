@@ -45,16 +45,6 @@ angular.module( 'twitch.clips.manager' ).factory( 'settingsStorage', [ '$rootSco
                     // Broadcast to app that settings loaded
                     $rootScope.$broadcast( 'settings' );
                 } );
-            } else {
-                // Insert default data then call _load again
-                chrome.storage.local.set( {
-                    'settings': {
-                        'preview': true,
-                        'mute': true,
-                        'sounds': true,
-                        'tabs': false
-                    }
-                }, _load );
             }
         } );
     }
