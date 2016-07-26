@@ -1,0 +1,58 @@
+/* Notification styling */
+.notifications {
+    position: fixed;
+    margin: auto;
+    top: 0px;
+    left: 50%;
+    z-index: 500;
+}
+
+.notifications .wrapper {
+    transform: translate(-50%, 0%);
+}
+
+.notifications .notification {
+    background-color: #462D73;
+    color: #FFFFFF;
+    font-weight: bold;
+    padding: 10px 15px;
+    white-space: nowrap;
+    opacity: 0;
+    margin-bottom: -36px;
+}
+
+
+/* Animation */
+.slide-in {
+    animation-duration: 3s;
+    animation-name: slide-in-keyframes;
+    animation-iteration-count: 1;
+    animation-timing-function: ease;
+}
+
+@keyframes slide-in-keyframes {
+  0% {
+    transform: translate(0px, 16px) scale(0.975);
+    opacity: 0;
+    margin-top: 15px;
+    margin-bottom: -36px;
+  }
+  8% {
+    transform: translate(0px, 0px) scale(1);
+    opacity: 1;
+    margin-top: 15px;
+    margin-bottom: 0px;
+  }
+  92% {
+    transform: translate(0px, 0px) scale(1);
+    opacity: 1;
+    margin-top: 15px;
+    margin-bottom: 0px;
+  }
+  100% {
+    transform: translate(0px, -16px) scale(0.975);
+    opacity: 0;
+    margin-top: 0px;
+    margin-bottom: -36px;
+  }
+}

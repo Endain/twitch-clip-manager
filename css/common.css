@@ -1,0 +1,61 @@
+/* Twitch colors                  */
+/* ------------------------------ */
+/* #6441A5 - Twitch Purple        */
+/* #B9A3E3 - Twitch Light Purple  */
+/* #262626 - Twitch Dark Grey     */
+/* #F1F1F1 - Twitch Light Grey    */
+/* ------------------------------ */
+
+/* Global styles */
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    padding: 0px;
+    margin: 0px;
+    background-color: #F9F8FC;
+}
+
+a {
+    text-decoration: none;
+    font-weight: bold;
+    color: #6441a4;
+    cursor: pointer;
+}
+
+/* Checkbox styles */
+input[type="checkbox"] {
+    display: none;
+}
+
+input[type="checkbox"] + label {
+    display: inline-block;
+    color: #FFFFFF;
+    cursor:pointer;
+    margin: 2px;
+}
+
+input[type="checkbox"] + label::before {
+    content: ' ';
+    box-sizing: border-box;
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    margin: 0px 6px 0px 0px;
+    border: 2px solid #FFFFFF;
+    border-radius: 3px;
+    background-color: transparent;
+    transition: background-color 0.1s ease;
+}
+input[type="checkbox"]:checked + label::before {
+    background-color: #B9A3E3;
+}
+
+input[type="checkbox"] + label span {
+    display: inline-block;
+    height: 15px;
+    line-height: 15px;
+    font-size: 13px;
+    vertical-align: top;
+}

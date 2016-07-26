@@ -1,0 +1,96 @@
+<!doctype html>
+<html ng-app="twitch.clips.manager">
+
+<head>
+    <title>Twitch Clip Manager - Settings</title>
+    <link rel="shortcut icon" href="/img/tcm_16.png">
+
+    <script src="/js/lib/jquery-3.1.0.min.js"></script>
+    <script src="/js/lib/angular.min.js"></script>
+    <script src="/js/lib/angular-sanitize.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="/css/common.css">
+    <link rel="stylesheet" type="text/css" href="/css/icons.css">
+    <link rel="stylesheet" type="text/css" href="/css/settings.css">
+    <link rel="stylesheet" type="text/css" href="/css/footer.css">
+</head>
+
+<body ng-controller="settings">
+
+    <div class="settings">
+
+        <!-- Preview clip on hover -->
+        <div class="row">
+            <input type="checkbox" id="preview" ng-model="settings.preview" ng-disabled="!isLoaded('preview')" ng-change="change('preview')" />
+            <label for="preview">
+                <span>Preview Clips</span>
+                <p class="description">
+                    Automatically play clips when you hover over a saved clip.
+                </p>
+            </label>
+        </div>
+
+        <!-- Mute by default -->
+        <div class="row">
+            <input type="checkbox" id="mute" ng-model="settings.mute" ng-disabled="!isLoaded('mute')" ng-change="change('mute')" />
+            <label for="mute">
+                <span>Mute By Default</span>
+                <p class="description">
+                    Automatically mute clip previews when you open the clip manager page.
+                </p>
+            </label>
+        </div>
+
+        <!-- Play action sounds -->
+        <div class="row">
+            <input type="checkbox" id="sounds" ng-model="settings.sounds" ng-disabled="!isLoaded('sounds')" ng-change="change('sounds')" />
+            <label for="sounds">
+                <span>Play Sound Effects</span>
+                <p class="description">
+                    Play a subtle sound effect when clips are capture or added and when notifications are displayed.
+                </p>
+            </label>
+        </div>
+
+        <!-- Auto close new clip tabs -->
+        <div class="row">
+            <input type="checkbox" id="tabs" ng-model="settings.tabs" ng-disabled="!isLoaded('tabs')" ng-change="change('tabs')" />
+            <label for="tabs">
+                <span>Close Clip Tabs</span>
+                <p class="description">
+                    Automatically close new tabs opened when you take a clip after the clip data has been captured.
+                </p>
+            </label>
+        </div>
+
+    </div>
+
+    <div class="footer">
+
+        <a href="http://www.twitch.tv" target="_blank">
+            <i class="icon icon-twitch"></i>
+            <div class="caption">Go To Twitch.tv</div>
+        </a>
+
+        <a href="http://www.github.com/endain" target="_blank">
+            <i class="icon icon-github"></i>
+            <div class="caption">Source Code</div>
+        </a>
+
+        <a href="http://www.paypal.me/SupportTheDev" target="_blank">
+            <i class="icon icon-paypal"></i>
+            <div class="caption">Support The Dev</div>
+        </a>
+
+        <div class="disclaimer">
+            This extension is not supported by or affiliated with Twitch.tv
+        </div>
+
+    </div>
+
+    <script src="/js/module.js"></script>
+    <script src="/js/service.settingsStorage.js"></script>
+    <script src="/js/controller.settings.js"></script>
+</body>
+
+</html>

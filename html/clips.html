@@ -1,0 +1,137 @@
+<!doctype html>
+<html ng-app="twitch.clips.manager">
+
+<head>
+    <title>Twitch Clips Manager</title>
+    <link rel="shortcut icon" href="/img/tcm_16.png">
+
+    <script src="/js/lib/jquery-3.1.0.min.js"></script>
+    <script src="/js/lib/angular.min.js"></script>
+    <script src="/js/lib/angular-sanitize.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="/css/common.css">
+    <link rel="stylesheet" type="text/css" href="/css/icons.css">
+    <link rel="stylesheet" type="text/css" href="/css/manager.css">
+    <link rel="stylesheet" type="text/css" href="/css/footer.css">
+    <link rel="stylesheet" type="text/css" href="/css/filters.css">
+    <link rel="stylesheet" type="text/css" href="/css/dropdown.css">
+    <link rel="stylesheet" type="text/css" href="/css/notifications.css">
+</head>
+
+<body ng-controller="manager">
+
+    <div class="header">
+
+        <!-- Filter by broadcaster options -->
+        <button class="filter" checkbox-filter="filterBroadcaster">
+            <i class="icon icon-filter"></i>
+            <span>Broadcaster</span>
+        </button>
+
+        <!-- Filter by viewer options -->
+        <button class="filter" checkbox-filter="filterViewer">
+            <i class="icon icon-filter"></i>
+            <span>Viewer</span>
+        </button>
+
+        <!-- Filter by game options -->
+        <button class="filter" checkbox-filter="filterGame">
+            <i class="icon icon-filter"></i>
+            <span>Game</span>
+        </button>
+
+        <!-- Sorting options -->
+        <button class="dropdown" dropdown="sortBy">
+            <i class="icon icon-sort-alpha-asc" ng-class="sortDirection()" ng-click="toggleSortDirection()"></i>
+            <span ng-bind="sortBy.selected.label"></span>
+        </button>
+
+        <!-- Settings link -->
+        <span class="header-icon pull-right">
+            <a class="icon icon-cog" href="/html/settings.html" target="_blank"></a>
+        </span>
+
+        <!-- Mute toggle -->
+        <span class="header-icon pull-right">
+            <i class="icon icon-volume-high" ng-class="muteIcon()" ng-click="toggleMute()"></i>
+        </span>
+
+    </div>
+
+    <div class="clip-container">
+
+        <!-- Display all clips -->
+        <div class="clip" ng-repeat="clip in filteredClips">
+
+            <!-- Clip tile header -->
+            <div class="clip-header">
+                <span class="pull-left">
+                    <span>Clipped By <a ng-href="{{::viewerLink(clip)}}">{{::viewer(clip)}}</a></span>
+                </span>
+                <span class="pull-right">
+                    <a class="icon icon-copy" ng-click="copyClipLink(clip)"></a>
+                    <a class="icon icon-download3" ng-href="{{::downloadLink(clip)}}" download="{{::downloadName(clip)}}"></a>
+                    <a class="icon icon-bin" ng-click="deleteClip(clip)"></a>
+                </span>
+            </div>
+
+            <!-- Clip tile thumbnail -->
+            <div class="clip-thumbnail clip-preview">
+                <a ng-href="{{::clipLink(clip)}}" target="_blank">
+                    <div class="loading">
+                        <i class="icon icon-spinner2 rotate"></i>
+                    </div>
+                    <img class="cover" ng-src="{{::thumbnailLink(clip)}}" />
+                    <video class="preview" data-src="{{::videoLink(clip)}}" preload="auto"></video>
+                </a>
+            </div>
+
+            <!-- Clip info sections -->
+            <div class="clip-info">
+                <div class="title" title="{{::title(clip)}}">{{::title(clip)}}</div>
+                <div class="cast">
+                    <a ng-href="{{::casterLink(clip)}}">{{::caster(clip)}}</a>
+                    <span> playing </span>
+                    <a>{{::game(clip)}}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifications container -->
+    <notifications></notifications>
+
+    <div class="footer">
+
+        <a href="http://www.twitch.tv" target="_blank">
+            <i class="icon icon-twitch"></i>
+            <div class="caption">Go To Twitch.tv</div>
+        </a>
+
+        <a href="http://www.github.com/endain" target="_blank">
+            <i class="icon icon-github"></i>
+            <div class="caption">Source Code</div>
+        </a>
+
+        <a href="http://www.paypal.me/SupportTheDev" target="_blank">
+            <i class="icon icon-paypal"></i>
+            <div class="caption">Support The Dev</div>
+        </a>
+
+        <div class="disclaimer">
+            This extension is not supported by or affiliated with Twitch.tv
+        </div>
+
+    </div>
+
+    <script src="/js/module.js"></script>
+    <script src="/js/service.clipboard.js"></script>
+    <script src="/js/service.settingsStorage.js"></script>
+    <script src="/js/directive.clipPreview.js"></script>
+    <script src="/js/directive.checkboxFilter.js"></script>
+    <script src="/js/directive.dropdown.js"></script>
+    <script src="/js/directive.notifications.js"></script>
+    <script src="/js/controller.manager.js"></script>
+</body>
+
+</html>

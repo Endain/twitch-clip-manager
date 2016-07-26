@@ -1,0 +1,17 @@
+.settings {
+    margin: 30px auto;
+    padding: 15px 30px;
+    max-width: 350px;
+    background-color: #6441A5;
+}
+
+.settings .row {
+    margin: 15px 0px;
+    width: 100%;
+}
+
+.settings .row .description {
+    font-size: 10px;
+    margin: 10px 0px 0px 25px;
+    color: #B9A3E3;
+}

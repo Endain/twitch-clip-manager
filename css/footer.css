@@ -1,0 +1,54 @@
+.footer {
+    width: 100%;
+    padding: 10px;
+    text-align: center;
+}
+
+.footer .disclaimer {
+    width: 100%;
+    text-align: center;
+    color: #999999;
+    font-size: 10px;
+    padding-top: 15px;
+}
+
+.footer a {
+    margin-top: 10px;
+    display: inline-block;
+    text-align: center;
+    min-width: 100px;
+}
+
+.footer .caption {
+    position: relative;
+    color: #999999;
+    font-size: 11px;
+    line-height: 12px;
+    margin-top: -12px;
+    transform: translate(0px, -28px);
+    opacity: 0;
+    z-index: 0;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+}
+.footer .icon:hover + .caption {
+    transform: translate(0px, -34px);
+    opacity: 1;
+}
+
+.footer .icon {
+    position: relative;
+    font-size: 28px;
+    z-index: 1;
+}
+
+.footer .icon-twitch {
+    color: #6441A5;
+}
+
+.footer .icon-github {
+    color: #000000;
+}
+
+.footer .icon-paypal {
+    color: #0079C1;
+}

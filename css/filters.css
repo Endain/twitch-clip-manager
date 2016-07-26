@@ -1,0 +1,54 @@
+/* Filter button styling */
+.header button.filter {
+    display: inline-block;
+    padding: 15px;
+    color: #FFFFFF;
+    font-size: 13px;
+    font-weight: bold;
+    line-height: 13px;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    transition: background-color 0.075s ease 0.075s;
+}
+.header button.filter.active {
+    background-color: #462D73;
+    transition: background-color 0.075s ease;
+}
+
+.header button.filter i {
+    display: inline-block;
+    margin-right: 5px;
+    font-size: 11.5px;
+    line-height: 13px;
+    color: #FFFFFF;
+}
+
+/* Filter styling */
+.filters-container {
+    position: absolute;
+    top: 45px;
+    left: 0px;
+    padding: 30px;
+    width: 100%;
+    background-color: #462D73;
+    opacity: 0;
+    z-index: 200;
+    transition: opacity 0.075s ease 0.075s;
+}
+.filters-container.active {
+    opacity: 1;
+    transition: opacity 0.075s ease;
+}
+
+.filters-container .wrapper {
+    display: inline-block;
+    margin-right: 15px;
+    width: 165px;
+}
+.filters-container .wrapper label span {
+    max-width: 140px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
