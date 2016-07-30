@@ -15,6 +15,7 @@
     <link rel="stylesheet" type="text/css" href="/css/footer.css">
     <link rel="stylesheet" type="text/css" href="/css/filters.css">
     <link rel="stylesheet" type="text/css" href="/css/dropdown.css">
+    <link rel="stylesheet" type="text/css" href="/css/add.css">
     <link rel="stylesheet" type="text/css" href="/css/notifications.css">
 </head>
 
@@ -55,6 +56,9 @@
         <span class="header-icon pull-right">
             <i class="icon icon-volume-high" ng-class="muteIcon()" ng-click="toggleMute()"></i>
         </span>
+
+        <!-- Add clip -->
+        <add-clip></add-clip>
 
     </div>
 
@@ -124,14 +128,15 @@
 
     </div>
 
-    <script src="/js/module.js"></script>
-    <script src="/js/service.clipboard.js"></script>
-    <script src="/js/service.settingsStorage.js"></script>
-    <script src="/js/directive.clipPreview.js"></script>
-    <script src="/js/directive.checkboxFilter.js"></script>
-    <script src="/js/directive.dropdown.js"></script>
-    <script src="/js/directive.notifications.js"></script>
-    <script src="/js/controller.manager.js"></script>
+    <script src="/js/app.js"></script>
+    <script src="/js/services/service.clipboard.js"></script>
+    <script src="/js/services/service.settingsStorage.js"></script>
+    <script src="/js/directives/directive.clipPreview.js"></script>
+    <script src="/js/directives/directive.checkboxFilter.js"></script>
+    <script src="/js/directives/directive.addClip.js"></script>
+    <script src="/js/directives/directive.dropdown.js"></script>
+    <script src="/js/directives/directive.notifications.js"></script>
+    <script src="/js/controllers/controller.manager.js"></script>
 </body>
 
 </html>

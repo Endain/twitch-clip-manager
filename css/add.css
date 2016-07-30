@@ -1,0 +1,55 @@
+.add-clip {
+    position: relative;
+    z-index: 0;
+}
+
+.add-clip .icon {
+    position: relative;
+    z-index: 2;
+}
+
+.add-clip .add-clip-input {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 29px;
+    height: 29px;
+    margin: 7px;
+    padding: 5px;
+    font-size: 13px;
+    font-weight: bold;
+    line-height: 13px;
+    color: transparent;
+    outline: none;
+    border: 3px solid #B9A3E3;
+    border-radius: 3px;
+    opacity: 0;
+    z-index: 1;
+    transition: opacity 0.15s ease 0.2s, width 0.15s ease, color 0.15s ease;
+}
+.add-clip:hover .add-clip-input {
+    width: 400px;
+    color: #6441A5;
+    opacity: 1;
+    transition: opacity 0.15s ease, width 0.15s ease 0.2s, color 0.15s ease 0.2s;
+}
+
+.add-clip .add-clip-input::-webkit-input-placeholder {
+    color: #FFFFFF;
+    transition: color 0.15s ease;
+}
+.add-clip:hover .add-clip-input::-webkit-input-placeholder {
+    color: #B9A3E3;
+    transition: color 0.2s ease 0.15s;
+}
+
+
+/* Default styling overrides */
+.header .add-clip.header-icon .icon {
+    transition: background-color 0.15s ease 0.2s, color 0.15s ease 0.2s;
+}
+.header .add-clip.header-icon:hover .icon {
+    background-color: transparent;
+    color: #B9A3E3;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}

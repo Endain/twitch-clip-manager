@@ -302,7 +302,7 @@ angular.module( 'twitch.clips.manager' ).controller( 'manager', [ '$scope', '$sc
     chrome.runtime.onMessage.addListener( function ( message, sender, sendResponse ) {
         // If message is a clip, add it
         if( message.clip )
-            $timeout( loadClips, 2000 );
+            $timeout( loadClips, 100 );
     } );
 
     // Load clips on controller load

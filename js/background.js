@@ -35,6 +35,16 @@ chrome.runtime.onMessage.addListener( function ( message, sender, sendResponse )
         load();
 } );
 
+// Set up listener for when new clips are added
+chrome.runtime.onMessage.addListener( function ( message, sender, sendResponse ) {
+    // If message is add clip, verify and then add it
+    if( message.add )
+        addClip( message.add, sendResponse );
+
+    // Return true to flag async response
+    return true;
+} );
+
 
 // Function to load the extension settings
 function load() {
@@ -58,11 +68,15 @@ function load() {
 }
 
 // Function to get clip info and save it to the data store
-function addClip( url ) {
+function addClip( url, callback ) {
     // First fetch the clip data
     fetchClip( url, function ( details ) {
         // Store the extracted clip into the data store
-        saveClip( details )
+        saveClip( details, callback );
+    }, function () {
+        // Could not find or get clip, if callback given, call it
+        if( typeof callback === 'function' )
+            callback( { 'notification': 'Clip Not Found' } );
     } );
 }
 
@@ -97,7 +111,7 @@ function parseClipPage( url, raw ) {
     var casterName = new RegExp( '(broadcaster_display_name.*?"(.*?)",)', 'g' );
     var viewerLogin = new RegExp( '(curator_login.*?"(.*?)",)', 'g' );
     var viewerName = new RegExp( '(curator_display_name.*?"(.*?)",)', 'g' );
-    var video = new RegExp( '(clip_video_url.*?"(.*?)",)', 'g' );
+    var video = new RegExp( '(source":.*?"(.*?)"})', 'g' );
     var thumbnail = new RegExp( '(og:image" content=.*"(.*)")', 'g' );
     var id = new RegExp( '(slug.*?"(.*?)",)', 'g' );
 
@@ -117,7 +131,7 @@ function parseClipPage( url, raw ) {
 }
 
 // Function to add clip metadata to the saved clips
-function saveClip( details ) {
+function saveClip( details, callback ) {
     // Load the existing clips
     chrome.storage.local.get( 'clips', function ( data ) {
         var clips = data.clips;
@@ -145,6 +159,10 @@ function saveClip( details ) {
                 sound.volume = 0.75;
                 sound.play();
             }
+
+            // If callback given, call it
+            if( typeof callback === 'function' )
+                callback( { 'notification': 'Clip Added' } );
         } );
     } );
 }

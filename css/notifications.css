@@ -15,12 +15,12 @@
     background-color: #462D73;
     color: #FFFFFF;
     font-weight: bold;
+    text-align: center;
     padding: 10px 15px;
     white-space: nowrap;
     opacity: 0;
     margin-bottom: -36px;
 }
-
 
 /* Animation */
 .slide-in {
