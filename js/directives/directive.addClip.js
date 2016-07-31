@@ -6,7 +6,9 @@ angular.module( 'twitch.clips.manager' ).directive( 'addClip', [ '$timeout', fun
         template: '' +
             '<span class="add-clip header-icon pull-right">' +
             '   <i class="icon icon-plus"></i>' +
-            '   <input class="add-clip-input" placeholder="Twitch Clip URL" ng-model="link" ng-change="validateLink()" />' +
+            '   <form ng-submit="validateLink()">' +
+            '       <input class="add-clip-input" placeholder="Twitch Clip URL" ng-model="link" />' +
+            '   </form>' +
             '</span>',
         controller: function ( $scope ) {
             // Current link text to bind to
