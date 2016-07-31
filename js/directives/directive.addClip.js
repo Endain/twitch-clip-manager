@@ -1,4 +1,4 @@
-angular.module( 'twitch.clips.manager' ).directive( 'addClip', [ function (  ) {
+angular.module( 'twitch.clips.manager' ).directive( 'addClip', [ '$timeout', function ( $timeout ) {
     return {
         restrict: 'E',
         replace: true,
@@ -13,21 +13,25 @@ angular.module( 'twitch.clips.manager' ).directive( 'addClip', [ function (  ) {
             $scope.link = '';
 
             // Function to validate when the model changes
-            $scope.validateLink = function() {
-                var validator = new RegExp('^https:\/\/clips.twitch.tv\/.+\/.+');
+            $scope.validateLink = function () {
+                var validator = new RegExp( '^https:\/\/clips.twitch.tv\/.+\/.+' );
 
                 // Check if a valid link is given
-                if(validator.test($scope.link)) {
+                if( validator.test( $scope.link ) ) {
                     var link = $scope.link;
 
                     // Clear the link
                     $scope.link = '';
 
                     // Send to backend for adding
-                    chrome.runtime.sendMessage( { 'add': link }, function (response) {
+                    chrome.runtime.sendMessage( { 'add': link }, function ( response ) {
+                        console.log( response );
                         // If response is a notification, display it
-                        if(response && response.notification)
-                            $scope.$emit('notification', response.notification);
+                        if( response && response.notification ) {
+                            $timeout( function () {
+                                $scope.$emit( 'notification', response.notification );
+                            } );
+                        }
                     } );
                 }
             }

@@ -12,6 +12,7 @@
     <link rel="stylesheet" type="text/css" href="/css/common.css">
     <link rel="stylesheet" type="text/css" href="/css/icons.css">
     <link rel="stylesheet" type="text/css" href="/css/manager.css">
+    <link rel="stylesheet" type="text/css" href="/css/clips.css">
     <link rel="stylesheet" type="text/css" href="/css/footer.css">
     <link rel="stylesheet" type="text/css" href="/css/filters.css">
     <link rel="stylesheet" type="text/css" href="/css/dropdown.css">
@@ -85,7 +86,7 @@
                     <div class="loading">
                         <i class="icon icon-spinner2 rotate"></i>
                     </div>
-                    <img class="cover" ng-src="{{::thumbnailLink(clip)}}" />
+                    <img class="cover" clip-thumbnail ng-src="{{::thumbnailLink(clip)}}" />
                     <video class="preview" data-src="{{::videoLink(clip)}}" preload="auto"></video>
                 </a>
             </div>
@@ -132,6 +133,7 @@
     <script src="/js/services/service.clipboard.js"></script>
     <script src="/js/services/service.settingsStorage.js"></script>
     <script src="/js/directives/directive.clipPreview.js"></script>
+    <script src="/js/directives/directive.clipThumbnail.js"></script>
     <script src="/js/directives/directive.checkboxFilter.js"></script>
     <script src="/js/directives/directive.addClip.js"></script>
     <script src="/js/directives/directive.dropdown.js"></script>

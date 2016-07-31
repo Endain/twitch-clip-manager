@@ -5,7 +5,7 @@ angular.module( 'twitch.clips.manager' ).directive( 'clipPreview', [ '$http', 's
             // Get elements
             var container = $( element );
             var spinner = container.find( 'div' );
-            var image = container.find( 'img' );
+            var cover = container.find( '.cover' );
             var video = container.find( 'video' );
 
             // Keep state variables
@@ -23,6 +23,9 @@ angular.module( 'twitch.clips.manager' ).directive( 'clipPreview', [ '$http', 's
                 // If preview is turned off, return immediately
                 if( settingsStorage.get( 'preview' ) !== true )
                     return;
+
+                // Find the cover element again in case it was swapped
+                cover = container.find( '.cover' );
 
                 // Flag as inside
                 inside = true;
@@ -70,7 +73,7 @@ angular.module( 'twitch.clips.manager' ).directive( 'clipPreview', [ '$http', 's
                             if( playing ) {
                                 // Hide the thumbnail and spinner
                                 spinner.removeClass( 'active' );
-                                image.addClass( 'hide' );
+                                cover.addClass( 'hide' );
                             }
                         } );
                     }
@@ -87,7 +90,7 @@ angular.module( 'twitch.clips.manager' ).directive( 'clipPreview', [ '$http', 's
 
                 // Close loading and restore thumbnail
                 spinner.removeClass( 'active' );
-                image.removeClass( 'hide' );
+                cover.removeClass( 'hide' );
 
                 // If the video was playing, stop it
                 if( playing ) {

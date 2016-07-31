@@ -2,6 +2,9 @@ angular.module( 'twitch.clips.manager' ).controller( 'manager', [ '$scope', '$sc
     // List of all clips
     $scope.clips = [];
 
+    // Need reload flag
+    var needsReload = false;
+
     // List of filtered clips
     $scope.filteredClips = [];
 
@@ -68,7 +71,7 @@ angular.module( 'twitch.clips.manager' ).controller( 'manager', [ '$scope', '$sc
 
     // Function to get a clipraw video link
     $scope.videoLink = function ( clip ) {
-        return $sce.trustAsResourceUrl( clip.video );
+        return $sce.trustAsResourceUrl( clip.video[ clip.video.length - 1 ].source );
     };
 
     // Function to get a clip thumbnail link
@@ -98,7 +101,7 @@ angular.module( 'twitch.clips.manager' ).controller( 'manager', [ '$scope', '$sc
 
     // Function to get a clip download link
     $scope.downloadLink = function ( clip ) {
-        return $sce.trustAsUrl( clip.video );
+        return $sce.trustAsUrl( clip.video[ 0 ].source );
     };
 
     // Function to get the file download name for a clip
@@ -301,9 +304,28 @@ angular.module( 'twitch.clips.manager' ).controller( 'manager', [ '$scope', '$sc
     // Set up listener for when new clips are added
     chrome.runtime.onMessage.addListener( function ( message, sender, sendResponse ) {
         // If message is a clip, add it
-        if( message.clip )
-            $timeout( loadClips, 100 );
+        if( message.clip ) {
+            // If page is visible, load immediately
+            if( !document.hidden )
+                $timeout( loadClips );
+            else {
+                // Flag as needing reload
+                needsReload = true;
+            }
+        }
     } );
+
+    // Set up listener for visibility change events
+    $( document ).on( 'visibilitychange', function () {
+        // If document becomes visible and we need a reload, reload
+        if( !document.hidden && needsReload ) {
+            // Reload clips
+            $timeout( loadClips );
+
+            // Flag and no longer needing reload
+            needsReload = false;
+        }
+    } )
 
     // Load clips on controller load
     loadClips();

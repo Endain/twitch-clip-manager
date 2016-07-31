@@ -1,11 +1,25 @@
+// Globals
+var SAVE_FORMAT_VERSION = 1;
+
 // Keep cache of the plugin settings
 var settings = {};
+// Keep a cache of clips to update
+var updateList = [];
+// Reference to the next clip update task
+var nextUpdate = null;
 
 // Check if storage was initialized, if not - initialize it
 chrome.storage.local.get( 'clips', function ( data ) {
     // If no clips array, ad it and save it
     if( !data.clips )
         chrome.storage.local.set( { 'clips': [] }, function () {} );
+    else {
+        // If there was data, check for clips that need to be updated
+        for( var i = 0; i < data.clips.length; i++ ) {
+            if( data.clips[ i ].processing )
+                scheduleUpdate( data.clips[ i ] );
+        }
+    }
 } );
 
 // Set up handler for browser action click
@@ -38,8 +52,23 @@ chrome.runtime.onMessage.addListener( function ( message, sender, sendResponse )
 // Set up listener for when new clips are added
 chrome.runtime.onMessage.addListener( function ( message, sender, sendResponse ) {
     // If message is add clip, verify and then add it
-    if( message.add )
-        addClip( message.add, sendResponse );
+    if( message.add ) {
+        // Try and fetch the clip
+        fetchClip( message.add, function ( details ) {
+            // Clip found, add it
+            saveClip( details, function () {
+                // Clip saved, send notification
+                sendResponse( {
+                    'notification': 'Clip Added'
+                } );
+            } );
+        }, function () {
+            // Could not find clip, respond with clip not found
+            sendResponse( {
+                'notification': 'Clip Not Found'
+            } );
+        } );
+    }
 
     // Return true to flag async response
     return true;
@@ -57,7 +86,7 @@ function load() {
             // Insert default data then call load again
             chrome.storage.local.set( {
                 'settings': {
-                    'preview': true,
+                    'preview': false,
                     'mute': true,
                     'sounds': true,
                     'tabs': false
@@ -68,15 +97,23 @@ function load() {
 }
 
 // Function to get clip info and save it to the data store
-function addClip( url, callback ) {
+function addClip( url ) {
     // First fetch the clip data
     fetchClip( url, function ( details ) {
         // Store the extracted clip into the data store
-        saveClip( details, callback );
+        saveClip( details, function () {
+            // Play an icon animation to indicate save
+            animateIcon();
+
+            // Play a sound effect if sounds are on
+            if( settings.sounds === true ) {
+                var sound = new Audio( '/audio/clip.mp3' );
+                sound.volume = 0.75;
+                sound.play();
+            }
+        } );
     }, function () {
-        // Could not find or get clip, if callback given, call it
-        if( typeof callback === 'function' )
-            callback( { 'notification': 'Clip Not Found' } );
+        // TODO - Notify somehow that clip could not be added
     } );
 }
 
@@ -111,9 +148,15 @@ function parseClipPage( url, raw ) {
     var casterName = new RegExp( '(broadcaster_display_name.*?"(.*?)",)', 'g' );
     var viewerLogin = new RegExp( '(curator_login.*?"(.*?)",)', 'g' );
     var viewerName = new RegExp( '(curator_display_name.*?"(.*?)",)', 'g' );
-    var video = new RegExp( '(source":.*?"(.*?)"})', 'g' );
+    var video = new RegExp( '(quality_options[^]*(\\[[^]*\\])[^]*)', 'g' );
     var thumbnail = new RegExp( '(og:image" content=.*"(.*)")', 'g' );
     var id = new RegExp( '(slug.*?"(.*?)",)', 'g' );
+
+    // Get all video quality options
+    var qualities = JSON.parse( video.exec( raw )[ 2 ] );
+
+    // Parse over and organize quality options, determine if there are still more to be processed by Twitch
+    var stillProcessing = processQualityOptions( qualities );
 
     return {
         'game': game.exec( raw )[ 2 ],
@@ -122,12 +165,45 @@ function parseClipPage( url, raw ) {
         'casterName': casterName.exec( raw )[ 2 ],
         'viewerLogin': viewerLogin.exec( raw )[ 2 ],
         'viewerName': viewerName.exec( raw )[ 2 ],
-        'video': video.exec( raw )[ 2 ].replace( /\\/g, '' ),
+        'video': qualities,
         'thumbnail': thumbnail.exec( raw )[ 2 ],
         'id': id.exec( raw )[ 2 ],
         'link': url,
-        'timestamp': Date.now()
+        'timestamp': Date.now(),
+        'processing': stillProcessing,
+        'version': SAVE_FORMAT_VERSION
     };
+}
+
+// Function to sort quality options and figure out if the video is still being processed
+function processQualityOptions( qualities ) {
+    // Sort the options
+    qualities.sort( sortByResolution );
+
+    // If the last available option is not '360', then Twitch is still processing
+    return qualities[ qualities.length - 1 ].quality != '360';
+
+    // Function to sort by resolution from highest to lowest ('source' greater than numerical values)
+    function sortByResolution( a, b ) {
+        var resA = parseInt( a.quality );
+        var resB = parseInt( a.quality );
+
+        // Handle non-numbers
+        if( isNaN( resA ) && isNaN( resB ) )
+            return 0;
+        else if( isNaN( resA ) )
+            return -1;
+        else if( isNaN( resB ) )
+            return 1;
+
+        // Sort numerically
+        if( resA === resB )
+            return 0;
+        else if( resA > resB )
+            return -1;
+        else if( resB > resA )
+            return 1;
+    }
 }
 
 // Function to add clip metadata to the saved clips
@@ -136,35 +212,86 @@ function saveClip( details, callback ) {
     chrome.storage.local.get( 'clips', function ( data ) {
         var clips = data.clips;
 
-        // Make sure the clip does not already exist
-        for( var i = 0; i < clips.length; i++ ) {
-            if( clips[ i ].casterLogin === details.casterLogin && clips[ i ].id === details.id )
-                return;
-        }
+        // Check if the clip is already saved
+        var index = indexOfClip( clips, details );
 
-        // Add the clip to the data store
-        clips.push( details );
+        // If the clip already exists, replace it, if not then add it
+        if( index >= 0 )
+            clips[ index ] = details;
+        else
+            clips.push( details );
 
         // Write the changes back
         chrome.storage.local.set( { 'clips': clips }, function () {
             // When done, notify that data changed
             chrome.runtime.sendMessage( { 'clip': details }, function () {} );
 
-            // Play an icon animation to indicate save
-            animateIcon();
-
-            // Play a sound effect if sounds are on
-            if( settings.sounds === true ) {
-                var sound = new Audio( '/audio/clip.mp3' );
-                sound.volume = 0.75;
-                sound.play();
-            }
+            // If the clip was still processing, schedule it for updates
+            if( details.processing )
+                scheduleUpdate( details );
 
             // If callback given, call it
             if( typeof callback === 'function' )
-                callback( { 'notification': 'Clip Added' } );
+                callback();
         } );
     } );
+}
+
+// Function to attempt to schedule an update for a given clip
+function scheduleUpdate( clip ) {
+    // Check if the clip is already queued for updating
+    if( indexOfClip( updateList, clip ) < 0 )
+        updateList.push( clip );
+
+    // If there is not an update task, create one
+    if( nextUpdate === null )
+        nextUpdate = setTimeout( updateClips, 30000 );
+}
+
+// Function to find the index of a clip in the given array of clips
+function indexOfClip( array, clip ) {
+    for( var i = 0; i < array.length; i++ ) {
+        if( array[ i ].casterLogin === clip.casterLogin && array[ i ].id === clip.id )
+            return i;
+    }
+
+    // Clip not in array, return -1
+    return -1;
+}
+
+// Function to update all clips that are in the update list
+function updateClips() {
+    // Copy and clear the update list
+    var list = updateList;
+    updateList = [];
+
+    // Clear the nextUpdate task
+    nextUpdate = null;
+
+    // Process items on the list sequentially
+    processNextClip( list );
+
+    // Function to process updating a single clip
+    function processNextClip( clips ) {
+        // If there are any clips, grab the first on
+        if( clips.length > 0 ) {
+            var next = clips.shift();
+
+            // Fetch current clip info
+            fetchClip( next.link, function ( updated ) {
+                // Keep the original timestamp
+                updated.timestamp = next.timestamp;
+
+                // Save the updated info
+                saveClip( updated, function () {
+                    // When done saving, move to the next clip
+                    processNextClip( clips );
+                } );
+            }, function () {
+                // There was some error, do nothing
+            } );
+        }
+    }
 }
 
 // Function to generate an icon with color between white (0) and twitch purple (1)
